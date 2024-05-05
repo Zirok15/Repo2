@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UPB.BusinessLogic.Managers;
+using UPB.BusinessLogic.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,50 +10,47 @@ namespace UPB.NewAppVS.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        private List<string> _students;
+        private StudentManager _studentManager;
 
-        public StudentController()
+        public StudentController(StudentManager studentManager)
         {
-            _students = new List<string>();
-
-            _students.Add("John");
-            _students.Add("Jose");
-            _students.Add("Maria");
+            _studentManager = studentManager;
         }
 
         // GET: api/<StudentController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public List<Student> Get()
         {
-            return _students;
+            return _studentManager.GetAll();
         }
 
         // GET api/<StudentController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Student Get(int id)
         {
-            return _students[id];
+            Task<Student> studentFoundTask = _studentManager.GetStudentByID(id);
+            return studentFoundTask.Result != null ? studentFoundTask.Result : null;
         }
 
         // POST api/<StudentController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] Student value)
         {
-            _students.Add(value);
+            _studentManager.CreateStudent(value);
         }
 
         // PUT api/<StudentController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] Student value)
         {
-            _students[id] = value;
+            _studentManager.UpdateStudent(id, value);
         }
 
         // DELETE api/<StudentController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _students.RemoveRange(id, 1);
+            _studentManager.DeleteStudent(id);
         }
     }
 }
