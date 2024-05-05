@@ -22,7 +22,7 @@ Log.Information("Initializing the server!");
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddSingleton<StudentManager>();
+//builder.Services.AddSingleton<StudentManager>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

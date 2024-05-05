@@ -1,0 +1,4 @@
+camila,koria,5808080,O-
+Sebastián,Valeriano,6666666,AB+
+Katya,Flores,283747,O+
+Rodrigo,Koria,7156477,O-
