@@ -12,10 +12,11 @@ namespace UPB.BusinessLogic.Models
         public string lastName { get; set; }
         public int ci {  get; set; }
         public string bloodType { get; set; }
+        public string patientCode { get; set; }
 
         public string GetInfo()
         {
-            return $"{name},{lastName},{ci},{bloodType}\n";
+            return $"{name},{lastName},{ci},{bloodType},{patientCode}\n";
         }
     }
 }

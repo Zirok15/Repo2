@@ -29,21 +29,22 @@ namespace UPB.BusinessLogic.Managers
             foreach(string patientData in patientsData)
             {
                 string[] data = patientData.Split(',');
-                if (data.Length != 4) continue;
+                if (data.Length != 5) continue;
                 _patients.Add(new Patient()
                 {
                     name = data[0],
                     lastName = data[1],
                     ci = int.Parse(data[2]),
-                    bloodType = data[3]
+                    bloodType = data[3],
+                    patientCode = data[4]
                 });
             }
 
-            Log.Information("Client requested patients list");
+            Log.Information($"Client requested patients list.\nCurrent list has {_patients.Count} patients.");
             return _patients;
         }
 
-        public Patient CreatePatient(string name, string lastName, int ci)
+        public async Task<Patient> CreatePatient(string name, string lastName, int ci)
         {
             Patient createdPatient = new Patient()
             {
@@ -52,8 +53,17 @@ namespace UPB.BusinessLogic.Managers
                 ci = ci,
             };
 
-            Random random = new Random();
+            Random random = new();
             createdPatient.bloodType = bloodTypes[random.Next(bloodTypes.Length)];
+
+            //EXTENSIÓN PARA EL TERCER PARCIAL
+
+            HttpClient client = new();
+            HttpResponseMessage responseMessage = await client.GetAsync($"http://localhost:5243/api/PatientCode?name={name}&lastName={lastName}&ci={ci}&bloodType={createdPatient.bloodType}");
+            string responseText = await responseMessage.Content.ReadAsStringAsync();
+            createdPatient.patientCode = responseText;
+
+            //FIN EXTENSIÓN
 
             Log.Information($"Successfuly created patient with ci {ci}");
             AddPatient(createdPatient);
@@ -77,7 +87,7 @@ namespace UPB.BusinessLogic.Managers
             {
                 Console.WriteLine(patientsData[i]);
                 string[] patient = patientsData[i].Split(',');
-                if (patient.Length != 4) break;
+                if (patient.Length != 5) break;
 
                 found = int.Parse(patient[2]) == ci;
             }
@@ -105,7 +115,8 @@ namespace UPB.BusinessLogic.Managers
                 name = foundPatientData[0],
                 lastName = foundPatientData[1],
                 ci = ci,
-                bloodType = foundPatientData[3]
+                bloodType = foundPatientData[3],
+                patientCode = foundPatientData[4]
             };
 
             Log.Information(foundPatientString);
